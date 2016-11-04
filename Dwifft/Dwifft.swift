@@ -18,14 +18,8 @@ public extension Diff {
     public var insertions: [DiffStep<T>] { return results.filter { $0.isInsertion  }.sorted { $0.idx < $1.idx } }
     public var deletions:  [DiffStep<T>] { return results.filter { !$0.isInsertion }.sorted { $0.idx > $1.idx } }
     
-    public func reversed() -> Diff<T> {
-        let reversedResults = self.results.reversed().map { (result: DiffStep<T>) -> DiffStep<T> in
-            switch result {
-            case .insert(let i, let j): return .delete(i, j)
-            case .delete(let i, let j): return .insert(i, j)
-            }
-        }
-        return Diff<T>(results: reversedResults)
+    public var reversed: Diff<T> {
+        return Diff<T>(results: results.reversed().map { $0.reversed })
     }
 }
 

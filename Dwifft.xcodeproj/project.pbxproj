@@ -90,9 +90,9 @@
 				041EBBAE1B8967C300E113B3 /* Dwifft.swift */,
 				035FAF981DCD4415007E5F8A /* DiffStep.swift */,
 				035FAF9B1DCD447B007E5F8A /* MemoizedSequenceComparison.swift */,
+				035FAF9E1DCD44DA007E5F8A /* Array.swift */,
 				041EBBAF1B8967C300E113B3 /* Dwifft+UIKit.swift */,
 				041EBB951B89679200E113B3 /* Supporting Files */,
-				035FAF9E1DCD44DA007E5F8A /* Array.swift */,
 			);
 			path = Dwifft;
 			sourceTree = "<group>";

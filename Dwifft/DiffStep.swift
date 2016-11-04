@@ -13,12 +13,6 @@ public enum DiffStep<T>: CustomDebugStringConvertible {
     case insert(Int, T)
     case delete(Int, T)
     
-    internal var isInsertion: Bool {
-        switch self {
-        case .insert: return true
-        case .delete: return false
-        }
-    }
     
     public var idx: Int {
         switch self {
@@ -31,6 +25,20 @@ public enum DiffStep<T>: CustomDebugStringConvertible {
         switch self {
         case .insert(let j): return j.1
         case .delete(let j): return j.1
+        }
+    }
+    
+    internal var isInsertion: Bool {
+        switch self {
+        case .insert: return true
+        case .delete: return false
+        }
+    }
+    
+    internal var reversed: DiffStep<T> {
+        switch self {
+        case let .insert(i, j): return .delete(i, j)
+        case let .delete(i, j): return .insert(i, j)
         }
     }
 }

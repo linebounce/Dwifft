@@ -45,7 +45,7 @@ class DwifftTests: XCTestCase {
             let applied = test.array1.apply(diff)
             XCTAssertEqual(applied, test.array2)
             
-            let reversed = diff.reversed()
+            let reversed = diff.reversed
             let reverseApplied = test.array2.apply(reversed)
             XCTAssertEqual(reverseApplied, test.array1)
         }

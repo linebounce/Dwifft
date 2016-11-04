@@ -37,8 +37,8 @@ open class TableViewDiffCalculator<T: Equatable> {
             guard diff.results.count > 0 else { return }
             tableView?.beginUpdates()
             self._rows = newValue
-            let insertionIndexPaths = diff.insertions.map { IndexPath(row: $0.idx, section: self.sectionIndex) }
-            let deletionIndexPaths = diff.deletions.map { IndexPath(row: $0.idx, section: self.sectionIndex) }
+            let insertionIndexPaths = diff.insertions.map { IndexPath(row: $0.idx, section: sectionIndex) }
+            let deletionIndexPaths = diff.deletions.map { IndexPath(row: $0.idx, section: sectionIndex) }
             
             tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
             tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
