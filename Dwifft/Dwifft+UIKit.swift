@@ -23,31 +23,28 @@ open class TableViewDiffCalculator<T: Equatable> {
     open var sectionIndex: Int = 0
     
     /// You can change insertion/deletion animations like this! Fade works well. So does Top/Bottom. Left/Right/Middle are a little weird, but hey, do your thing.
-    open var insertionAnimation = UITableViewRowAnimation.automatic, deletionAnimation = UITableViewRowAnimation.automatic
-
+    open var insertionAnimation: UITableViewRowAnimation = .automatic
+    open var deletionAnimation:  UITableViewRowAnimation = .automatic
+    
     /// Change this value to trigger animations on the table view.
     private var _rows: [T]
     open var rows : [T] {
-        get {
-            return _rows
-        }
+        get { return _rows }
         set {
             let oldRows = rows
             let newRows = newValue
             let diff = oldRows.diff(newRows)
-            if (diff.results.count > 0) {
-                tableView?.beginUpdates()
-                self._rows = newValue
-                let insertionIndexPaths = diff.insertions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
-                let deletionIndexPaths = diff.deletions.map({ IndexPath(row: $0.idx, section: self.sectionIndex) })
-
-                tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
-                tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
-                tableView?.endUpdates()
-            }
+            guard diff.results.count > 0 else { return }
+            tableView?.beginUpdates()
+            self._rows = newValue
+            let insertionIndexPaths = diff.insertions.map { IndexPath(row: $0.idx, section: self.sectionIndex) }
+            let deletionIndexPaths = diff.deletions.map { IndexPath(row: $0.idx, section: self.sectionIndex) }
+            
+            tableView?.insertRows(at: insertionIndexPaths, with: insertionAnimation)
+            tableView?.deleteRows(at: deletionIndexPaths, with: deletionAnimation)
+            tableView?.endUpdates()
         }
     }
-    
 }
     
 open class CollectionViewDiffCalculator<T: Equatable> {
@@ -67,28 +64,23 @@ open class CollectionViewDiffCalculator<T: Equatable> {
 
     /// Change this value to trigger animations on the collection view.
     open var rows : [T] {
-        get {
-            return _rows
-        }
+        get { return _rows }
         set {
             let oldRows = rows
             let newRows = newValue
             let diff = oldRows.diff(newRows)
-            if (diff.results.count > 0) {
-                collectionView?.performBatchUpdates({ () -> Void in
-                    self._rows = newValue
-
-                    let insertionIndexPaths = diff.insertions.map({ IndexPath(item: $0.idx, section: self.sectionIndex) })
-                    let deletionIndexPaths = diff.deletions.map({ IndexPath(item: $0.idx, section: self.sectionIndex) })
-
-                    self.collectionView?.insertItems(at: insertionIndexPaths)
-                    self.collectionView?.deleteItems(at: deletionIndexPaths)
-                }, completion: nil)
-            }
-            
+            guard diff.results.count > 0 else { return }
+            collectionView?.performBatchUpdates({ _ in
+                self._rows = newValue
+                
+                let insertionIndexPaths = diff.insertions.map { IndexPath(item: $0.idx, section: self.sectionIndex) }
+                let deletionIndexPaths = diff.deletions.map { IndexPath(item: $0.idx, section: self.sectionIndex) }
+                
+                self.collectionView?.insertItems(at: insertionIndexPaths)
+                self.collectionView?.deleteItems(at: deletionIndexPaths)
+            })
         }
     }
-    
 }
 
 #endif

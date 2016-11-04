@@ -9,10 +9,10 @@
 public struct Diff<T> {
     public let results: [DiffStep<T>]
     public var insertions: [DiffStep<T>] {
-        return results.filter({ $0.isInsertion }).sorted { $0.idx < $1.idx }
+        return results.filter { $0.isInsertion }.sorted { $0.idx < $1.idx }
     }
     public var deletions: [DiffStep<T>] {
-        return results.filter({ !$0.isInsertion }).sorted { $0.idx > $1.idx }
+        return results.filter { !$0.isInsertion }.sorted { $0.idx > $1.idx }
     }
     public func reversed() -> Diff<T> {
         let reversedResults = self.results.reversed().map { (result: DiffStep<T>) -> DiffStep<T> in
@@ -27,7 +27,7 @@ public struct Diff<T> {
     }
 }
 
-public func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
+public func + <T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
     return Diff<T>(results: left.results + [right])
 }
 
@@ -35,8 +35,9 @@ public func +<T> (left: Diff<T>, right: DiffStep<T>) -> Diff<T> {
 public enum DiffStep<T> : CustomDebugStringConvertible {
     case insert(Int, T)
     case delete(Int, T)
+    
     var isInsertion: Bool {
-        switch(self) {
+        switch self {
         case .insert:
             return true
         case .delete:
@@ -44,7 +45,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
         }
     }
     public var debugDescription: String {
-        switch(self) {
+        switch self {
         case .insert(let i, let j):
             return "+\(j)@\(i)"
         case .delete(let i, let j):
@@ -52,7 +53,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
         }
     }
     public var idx: Int {
-        switch(self) {
+        switch self {
         case .insert(let i, _):
             return i
         case .delete(let i, _):
@@ -60,7 +61,7 @@ public enum DiffStep<T> : CustomDebugStringConvertible {
         }
     }
     public var value: T {
-        switch(self) {
+        switch self {
         case .insert(let j):
             return j.1
         case .delete(let j):
@@ -82,15 +83,15 @@ public extension Array where Element: Equatable {
         if i == 0 && j == 0 {
             return Diff<Element>(results: [])
         } else if i == 0 {
-            return diffFromIndices(table, x, y, i, j-1) + DiffStep.insert(j-1, y[j-1])
+            return diffFromIndices(table, x, y, i, j - 1) + DiffStep.insert(j - 1, y[j - 1])
         } else if j == 0 {
-            return diffFromIndices(table, x, y, i - 1, j) + DiffStep.delete(i-1, x[i-1])
-        } else if table[i][j] == table[i][j-1] {
-            return diffFromIndices(table, x, y, i, j-1) + DiffStep.insert(j-1, y[j-1])
-        } else if table[i][j] == table[i-1][j] {
-            return diffFromIndices(table, x, y, i - 1, j) + DiffStep.delete(i-1, x[i-1])
+            return diffFromIndices(table, x, y, i - 1, j) + DiffStep.delete(i - 1, x[i - 1])
+        } else if table[i][j] == table[i][j - 1] {
+            return diffFromIndices(table, x, y, i, j - 1) + DiffStep.insert(j - 1, y[j - 1])
+        } else if table[i][j] == table[i - 1][j] {
+            return diffFromIndices(table, x, y, i - 1, j) + DiffStep.delete(i - 1, x[i - 1])
         } else {
-            return diffFromIndices(table, x, y, i-1, j-1)
+            return diffFromIndices(table, x, y, i - 1, j - 1)
         }
     }
     
@@ -121,9 +122,9 @@ public extension Array where Element: Equatable {
     fileprivate static func lcsFromIndices(_ table: [[Int]], _ x: [Element], _ y: [Element], _ i: Int, _ j: Int) -> [Element] {
         if i == 0 || j == 0 {
             return []
-        } else if x[i-1] == y[j-1] {
+        } else if x[i - 1] == y[j - 1] {
             return lcsFromIndices(table, x, y, i - 1, j - 1) + [x[i - 1]]
-        } else if table[i-1][j] > table[i][j-1] {
+        } else if table[i - 1][j] > table[i][j - 1] {
             return lcsFromIndices(table, x, y, i - 1, j)
         } else {
             return lcsFromIndices(table, x, y, i, j - 1)
@@ -140,10 +141,10 @@ internal struct MemoizedSequenceComparison<T: Equatable> {
                 if (i == 0 || j == 0) {
                     table[i][j] = 0
                 }
-                else if x[i-1] == y[j-1] {
-                    table[i][j] = table[i-1][j-1] + 1
+                else if x[i - 1] == y[j - 1] {
+                    table[i][j] = table[i - 1][j - 1] + 1
                 } else {
-                    table[i][j] = max(table[i-1][j], table[i][j-1])
+                    table[i][j] = max(table[i - 1][j], table[i][j - 1])
                 }
             }
         }
